@@ -1,0 +1,81 @@
+﻿using System;
+using System.Reflection;
+using System.Linq;
+
+namespace AttrReflex
+{
+
+	public class MyAttribute : Attribute
+	{
+		
+	}
+	public class MyForMethodAttribute : Attribute
+	{
+
+	}
+
+	[My]
+	public class MyTestAttributes {
+
+	}
+	[My]
+	public class MyTest2Attributes
+	{
+		[MyForMethod]
+		public void MyMethode1()
+		{
+			MyHelperMethod();
+			Console.WriteLine("Do something...");
+
+			// do sommething
+		}
+		[MyForMethod]
+		public void MyMethode2()
+		{
+			MyHelperMethod();
+			Console.WriteLine("Do something else...");
+		}
+		
+		public void MyHelperMethod()
+		{
+			Console.WriteLine("Doing some help...");
+
+		}
+	}
+	class Program
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="args"></param>
+		static void Main(string[] args)
+		{
+			
+			//with linq
+			var tests = from t in Assembly.GetExecutingAssembly().GetTypes()
+						where t.GetCustomAttributes(false).Any(a => a is MyAttribute)
+						select t;
+
+			foreach (Type t in tests)
+			{
+				Console.WriteLine("Running tests in suite "+ t.Name);
+				var attrMethods = from m in t.GetMethods()
+								 where m.GetCustomAttributes().Any(a => a is MyForMethodAttribute)
+								 select m;
+
+				object testInstance = Activator.CreateInstance(t);
+				foreach (MethodInfo minfo in attrMethods)
+				{
+					//new object[0] car pas de parametres dans mes methodes
+					minfo.Invoke(testInstance, new object[0]);
+						
+				}
+			}
+
+
+
+			Console.ReadKey();
+
+		}
+	}
+}

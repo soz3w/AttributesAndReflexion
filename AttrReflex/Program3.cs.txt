@@ -1,0 +1,36 @@
+﻿using System;
+using System.Reflection;
+using System.Linq;
+
+namespace AttrReflex
+{
+
+	public class MyAttribute : Attribute
+	{
+		public MyAttribute(int value,string value2)
+		{
+			Console.WriteLine("ctor MyAttributes : value1: "+value+ " value2: "+value2);
+		}
+		public int value3 { get; set; }
+		public string value4 { get; set; }
+	}
+
+	//value3, value4 optional
+	[My(25,"Saadna",value3=12,value4 ="titi")]
+	class Program
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="args"></param>
+		static void Main(string[] args)
+		{
+			typeof(Program).GetCustomAttributes(false);
+
+
+
+			Console.ReadKey();
+
+		}
+	}
+}

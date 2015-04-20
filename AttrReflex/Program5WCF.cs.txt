@@ -1,0 +1,35 @@
+﻿using System;
+using System.ServiceModel;
+
+//add reference to System.ServiceModel for wcf
+
+
+[ServiceContract]
+interface ICow
+{
+	[OperationContract]
+	void Moo();
+}
+class Cow : ICow
+{
+	public void Moo()
+	{
+		Console.WriteLine("Mooooooooooooo");
+	}
+}
+
+class MainClass
+{
+	static void Main()
+	{
+		var host = new ServiceHost(typeof(Cow));
+		host.AddServiceEndpoint(typeof(ICow),new WSHttpBinding(), "http://localhost:1234");
+		host.Open();
+
+		//At some other end of the globe
+		var cow = ChannelFactory<ICow>.CreateChannel(new WSHttpBinding(), new EndpointAddress("http://localhost:1234"));
+		cow.Moo();
+		Console.ReadKey();
+
+	}
+}

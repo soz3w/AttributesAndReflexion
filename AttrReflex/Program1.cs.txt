@@ -1,0 +1,54 @@
+﻿using System;
+using System.Reflection;
+using System.Linq;
+
+namespace AttrReflex
+{
+
+	public class MyAttribute : Attribute
+	{ }
+
+	[MyAttribute]
+	public class MyTestAttributes {
+
+	}
+	[MyAttribute]
+	public class MyTest2Attributes
+	{
+
+	}
+	class Program
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="args"></param>
+		static void Main(string[] args)
+		{
+			//by looping
+			foreach (Type t in Assembly.GetExecutingAssembly().GetTypes())
+			{
+				//Console.WriteLine(t.Name);
+				foreach (Attribute a in t.GetCustomAttributes())
+					if (a is MyAttribute)
+						Console.WriteLine(t.Name+ " is using MyAttribute");
+			}
+			
+
+			//with linq
+			var tests = from t in Assembly.GetExecutingAssembly().GetTypes()
+						where t.GetCustomAttributes().Any(a => a is MyAttribute)
+						select t;
+
+			foreach (Type t in tests)
+			{
+				Console.WriteLine(t.Name);
+			}
+
+
+
+			Console.ReadKey();
+
+		}
+	}
+}
